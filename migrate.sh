@@ -19,16 +19,29 @@ else
     echo "Run neo migration with contexts: $NEO_MIG_CONTEXT"
 fi
 
-./liquigraph.sh --changelog /usr/scripts/changelog.xml \
-    --graph-db-uri jdbc:neo4j:$NEO_HOST:$NEO_PORT/ \
-    --execution-contexts $NEO_MIG_CONTEXT \
-    --dry-run-output-directory /tmp \
-    --username $NEO_USERNAME --password < pass.txt
+if [ -z "$NEO_USERNAME" ]; then 
+    ./liquigraph.sh --changelog /usr/scripts/changelog.xml \
+        --graph-db-uri jdbc:neo4j:$NEO_HOST:$NEO_PORT/ \
+        --execution-contexts $NEO_MIG_CONTEXT \
+        --dry-run-output-directory /tmp
+else 
+   ./liquigraph.sh --changelog /usr/scripts/changelog.xml \
+        --graph-db-uri jdbc:neo4j:$NEO_HOST:$NEO_PORT/ \
+        --execution-contexts $NEO_MIG_CONTEXT \
+        --dry-run-output-directory /tmp \
+        --username $NEO_USERNAME --password < pass.txt
+fi
 
 echo "\n Running follow migrations:"
 cat /tmp/output.cypher
 
-./liquigraph.sh --changelog /usr/scripts/changelog.xml \
-    --graph-db-uri jdbc:neo4j:$NEO_HOST:$NEO_PORT/ \
-    --execution-contexts $NEO_MIG_CONTEXT \
-    --username $NEO_USERNAME --password < pass.txt
+if [ -z "$NEO_USERNAME" ]; then 
+    ./liquigraph.sh --changelog /usr/scripts/changelog.xml \
+        --graph-db-uri jdbc:neo4j:$NEO_HOST:$NEO_PORT/ \
+        --execution-contexts $NEO_MIG_CONTEXT
+else 
+   ./liquigraph.sh --changelog /usr/scripts/changelog.xml \
+        --graph-db-uri jdbc:neo4j:$NEO_HOST:$NEO_PORT/ \
+        --execution-contexts $NEO_MIG_CONTEXT \
+        --username $NEO_USERNAME --password < pass.txt
+fi
